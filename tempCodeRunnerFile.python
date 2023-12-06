@@ -1,0 +1,43 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+import seaborn as sns
+import matplotlib as plt
+
+data = pd.read_csv("./CICDS_Wednesday.csv")
+print(data)
+
+print(data.columns)
+
+data['Timestamp'] = pd.to_datetime(data['Timestamp'])
+print(data)
+
+safe = data[data['Label'] == 'BENIGN']
+attacked = data[data['Label'] != 'BENIGN']
+print(attacked)
+
+most_timestamp = attacked['Timestamp'].value_counts().idxmax()
+print('Waktu paling banyak terjadinya serangan :',(most_timestamp))
+
+most_port = attacked['Source Port'].value_counts().idxmax()
+print('Source Port :',(most_port))
+
+most_suffer = attacked['Destination Port'].value_counts().idxmax()
+print('Destination Port terbanyak :',(most_suffer))
+
+# Tren serangan per waktu
+
+# Groupby dan hitung jumlah kejadian per jam
+attacks_per_hour = attacked.groupby(attacked['Timestamp'].dt.strftime('%H:%M'))['Flow ID'].count()
+max = activity_per_hour.max()
+time = attacks_per_hour.idxmax()
+
+# Visualisasi
+plt.figure(figsize=(10, 6))
+activity_per_hour.plot(kind='line', marker='o', color='#A52A2A')
+plt.title('Tren Serangan')
+plt.xlabel('Waktu')
+plt.ylabel('Jumlah Aktivitas')
+plt.show()
+
+print('Berdasarkan grafik di atas, didapatkan bahwa jumlah serangan terbanyak pada jam',time,'dengan jumlah serangan sebanyak ', max)
